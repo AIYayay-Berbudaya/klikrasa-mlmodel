@@ -39,7 +39,7 @@ class StoryParaphraser:
             """
 
             res = genai.generate_text(
-                model="gemini-pro",
+                model="models/gemini-2.5-flash",
                 prompt=prompt,
                 max_output_tokens=400
             )
@@ -64,7 +64,7 @@ class StoryParaphraser:
             """
 
             r = genai.generate_text(
-                model="models/gemini-pro",
+                model="models/gemini-2.5-flash",
                 prompt=prompt,
                 max_output_tokens=60
             )

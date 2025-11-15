@@ -24,10 +24,10 @@ class AIHelper:
         Jawab secara singkat dan informatif.
         """
 
-        res = genai.generate_text(model="models/gemini-pro", prompt=prompt, max_output_tokens=256)
+        res = genai.generate_text(model="models/gemini-2.5-flash", prompt=prompt, max_output_tokens=256)
         return res.text
 
     def compare_kue(self, k1, k2):
         prompt = f"Bandingkan singkat antara {k1} dan {k2}. Fokus pada rasa, bahan, dan asal daerah."
-        res = genai.generate_text(model="gemini-pro", prompt=prompt, max_output_tokens=256)
+        res = genai.generate_text(model="models/gemini-2.5-flash", prompt=prompt, max_output_tokens=256)
         return res.text
