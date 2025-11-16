@@ -28,7 +28,7 @@ EMBEDDING_MODEL_NAME = os.getenv(
 
 # Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "models/gemini-1.5-flash-latest")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 # Optional
 SUMMARIZER_MODEL_DIR = Path(os.getenv("SUMMARIZER_MODEL_DIR", MODEL_PATH / "summarizer"))

@@ -9,29 +9,37 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 MODEL = GEMINI_MODEL
 
-
-@retry(reraise=True, stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=1, max=10),
-       retry=retry_if_exception_type(Exception))
+@retry(
+    reraise=True,
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=1, max=10),
+    retry=retry_if_exception_type(Exception)
+)
 def gemini_generate(prompt: str, timeout_sec: int = 15) -> str:
     """
-    Robust Gemini wrapper. Retries on failure.
+    Robust Gemini wrapper with retry mechanism.
+    Supports google-generativeai library (current version).
     """
     try:
         model = genai.GenerativeModel(MODEL)
         resp = model.generate_content(prompt)
-        # prefer .text
+        
+        # Primary method: access .text directly
         if hasattr(resp, "text") and resp.text:
             return resp.text.strip()
-        # fallback: inspect choices-like structure
-        try:
-            # some SDK versions present candidates/content
-            cand = getattr(resp, "candidates", None)
-            if cand and len(cand) > 0:
-                part = cand[0].content[0].text
-                return part.strip()
-        except Exception:
-            pass
+        
+        # Fallback 1: Access via candidates structure
+        if hasattr(resp, "candidates") and resp.candidates:
+            candidate = resp.candidates[0]
+            if hasattr(candidate, "content") and hasattr(candidate.content, "parts"):
+                parts = candidate.content.parts
+                if parts and hasattr(parts[0], "text"):
+                    return parts[0].text.strip()
+        
+        # Fallback 2: Convert response to string
+        logger.warning(f"Unexpected response structure: {type(resp)}")
         return str(resp).strip()
+        
     except Exception as e:
-        logger.exception("Gemini generate failed")
+        logger.exception(f"Gemini generate failed for prompt: {prompt[:50]}...")
         raise
